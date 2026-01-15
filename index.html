@@ -1,105 +1,227 @@
 <!DOCTYPE html>
-<html lang="en-us">
-
+<html lang="en">
 <head>
-    <base href="https://cdn.jsdelivr.net/gh/genizy/web-port@latest/ultrakill/">
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | ULTRAKILL</title>
-    <style>
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-            width: 100%;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Drive - Google Drive</title>
 
-        #unity-container {
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-    </style>
+<!-- iOS / PWA -->
+<meta name="apple-mobile-web-app-title" content="Web Port Game Launcher">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="Favicons/favicon-16x16.png?v=1">
+<link rel="icon" type="image/png" sizes="32x32" href="Favicons/favicon-32x32.png?v=1">
+<link rel="shortcut icon" href="Favicons/favicon.ico?v=1">
+<link rel="apple-touch-icon" sizes="180x180" href="Favicons/180x180.png?v=1">
+
+<style>
+:root {
+    --bg: #0f0f12;
+    --card: rgba(27, 27, 34, 0.7);
+    --glass: rgba(255, 255, 255, 0.08);
+    --accent: #22c55e;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: radial-gradient(circle at top, #1b1b25, #0f0f12);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 0.5rem;
+}
+
+p {
+    opacity: 0.7;
+    margin-bottom: 2rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* CARD */
+.card {
+    position: relative;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 0.85rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    overflow: hidden;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.12),
+        transparent
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+}
+
+/* COVER */
+.thumb {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+    background: #2a2a33;
+}
+
+/* TITLE */
+.title {
+    font-size: 0.95rem;
+    margin-top: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* PLAY OVERLAY */
+.play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(0,0,0,0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.card:hover .play {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.play a {
+    padding: 0.6rem 1.6rem;
+    background: var(--accent);
+    color: black;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 999px;
+    box-shadow: 0 10px 25px rgba(34,197,94,0.4);
+    transform: translateY(10px);
+    transition: transform 0.35s ease;
+}
+
+.card:hover .play a {
+    transform: translateY(0);
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
 </head>
 
-<body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <div id='loading-text' style="color: black; font-family: cursive; font-size: 48px; text-align: center; margin-top: 20px;">LOADING...</div>
-    <canvas id="unity-canvas" tabindex="-1" hidden></canvas>
-    <script src="Build/ultrakill.loader.js"></script>
-    <script>
-        var canvas = document.querySelector("#unity-canvas");
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            // Mobile device style: fill the whole browser client area with the game canvas:
-            var meta = document.createElement('meta');
-            meta.name = 'viewport';
-            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-            document.getElementsByTagName('head')[0].appendChild(meta);
-            canvas.style.width = "100%";
-            canvas.style.height = "100%";
-            canvas.style.position = "fixed";
-            document.body.style.textAlign = "left";
-        } else {
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                canvas.style.width = window.innerWidth + "px";
-                canvas.style.height = window.innerHeight + "px";
-            }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-        }
+<body>
 
-        function mergeFiles(fileParts) {
-            return new Promise((resolve, reject) => {
-                let buffers = [];
+<h1>🎮 Web-Ports</h1>
+<p>Hover a game to play</p>
 
-                function fetchPart(index) {
-                    if (index >= fileParts.length) {
-                        let mergedBlob = new Blob(buffers);
-                        let mergedFileUrl = URL.createObjectURL(mergedBlob);
-                        resolve(mergedFileUrl);
-                        return;
-                    }
-                    fetch(fileParts[index]).then((response) => response.arrayBuffer()).then((data) => {
-                        buffers.push(data);
-                        fetchPart(index + 1);
-                    }).catch(reject);
-                }
-                fetchPart(0);
-            });
-        }
+<div class="grid" id="grid"></div>
 
-        function getParts(file, start, end) {
-            let parts = [];
-            for (let i = start; i <= end; i++) {
-                parts.push(file + ".part" + i);
-            }
-            return parts;
-        }
-        Promise.all([
-            mergeFiles(getParts("Build/ultrakill.data.unityweb", 1, 4)),
-            mergeFiles(getParts("Build/ultrakill.wasm.unityweb", 1, 2))
-        ]).then(([dataUrl, wasmurl]) => {
-            document.querySelector("#unity-canvas").hidden = false;
-            createUnityInstance(document.querySelector("#unity-canvas"), {
-                dataUrl: dataUrl,
-                frameworkUrl: "Build/ultrakill.framework.js.unityweb",
-                codeUrl: wasmurl,
-                streamingAssetsUrl: "StreamingAssets",
-                companyName: "Hakita and Cake Logic",
-                productName: "ULTRAKILL",
-                productVersion: "1.4",
-                // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-                // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-            }).then((e) => {
-                document.querySelector("#loading-text").remove();
-            });
-        });
-    </script>
+<script>
+const BASE_URL = "https://ac1dst4r.github.io/Web-Ports/";
+const USER = "AC1DST4R";
+const REPO = "Web-Ports";
+
+const games = [
+  "Amanda the Adventurer",
+  "Andy's Apple Farm",
+  "Baldi's Basics Plus",
+  "Baldi's Basics Remastered",
+  "Bendy",
+  "Bloodmoney",
+  "Buckshot Roulette",
+  "Dead Plate",
+  "Deltatraveler",
+  "Don't Take This Cat Home",
+  "Getting Over It",
+  "Happy Sheepies",
+  "Hotline Miami",
+  "Omori",
+  "Pizza Tower",
+  "Raft",
+  "Sonic",
+  "That's Not My Neighbor",
+  "The Man In The Window",
+  "Undertale Yellow"
+];
+
+const imageExtensions = ["png", "jpg", "jpeg"];
+const grid = document.getElementById("grid");
+
+games.forEach((name, index) => {
+    const num = index + 1;
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const img = document.createElement("img");
+    img.className = "thumb";
+    img.alt = name;
+
+    // Try multiple image extensions
+    let extIndex = 0;
+    function tryNextImage() {
+        if (extIndex >= imageExtensions.length) return;
+        img.src = `https://raw.githubusercontent.com/${USER}/${REPO}/main/Cover%20Art/${num}.${imageExtensions[extIndex]}`;
+        extIndex++;
+    }
+    img.onerror = tryNextImage;
+    tryNextImage();
+
+    const title = document.createElement("div");
+    title.className = "title";
+    title.textContent = name;
+
+    const overlay = document.createElement("div");
+    overlay.className = "play";
+
+    const link = document.createElement("a");
+    link.href = BASE_URL + encodeURIComponent(name) + "/";
+    link.textContent = "▶ Play";
+
+    overlay.appendChild(link);
+    card.appendChild(img);
+    card.appendChild(title);
+    card.appendChild(overlay);
+    grid.appendChild(card);
+});
+</script>
+
 </body>
-
 </html>
