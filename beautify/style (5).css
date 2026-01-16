@@ -1,0 +1,211 @@
+/* CSS Playground - Edit me! */
+
+/* CSS Variables - Try changing these colors! */
+:root {
+  --primary: #a855f7;
+  --secondary: #ec4899;
+  --accent: #06b6d4;
+  --bg-dark: #09090b;
+  --bg-card: #18181b;
+  --text: #fafafa;
+  --text-muted: #71717a;
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg-dark);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 28rem;
+}
+
+/* Card */
+.card {
+  position: relative;
+  background: var(--bg-card);
+  border-radius: 1.5rem;
+  border: 1px solid #27272a;
+  overflow: hidden;
+}
+
+.card-bg {
+  position: absolute;
+  top: -8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20rem;
+  height: 20rem;
+  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  opacity: 0.2;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.card-content {
+  position: relative;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+/* Logo */
+.logo {
+  width: 5rem;
+  height: 5rem;
+  margin: 0 auto 1.5rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
+  animation: float 3s ease-in-out infinite;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Title */
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 2rem;
+}
+
+/* Animated Bars */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 4rem;
+  margin-bottom: 2rem;
+}
+
+.bar {
+  width: 0.5rem;
+  border-radius: 0.25rem;
+  background: linear-gradient(to top, var(--primary), var(--secondary));
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.bar-1 { height: 40%; animation-delay: 0s; }
+.bar-2 { height: 70%; animation-delay: 0.1s; }
+.bar-3 { height: 100%; animation-delay: 0.2s; }
+.bar-4 { height: 60%; animation-delay: 0.3s; }
+.bar-5 { height: 30%; animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.5); }
+}
+
+/* Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  border-radius: 0.75rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(168, 85, 247, 0.4);
+}
+
+.btn:hover .btn-icon {
+  transform: translateX(4px);
+}
+
+.btn:active {
+  transform: translateY(-1px);
+}
+
+.btn-icon {
+  transition: transform 0.3s ease;
+}
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #27272a;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  color: #52525b;
+  font-size: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+/* Bonus: Hover effects for stats */
+.stat:hover .stat-value {
+  color: var(--primary);
+  transition: color 0.3s ease;
+}
