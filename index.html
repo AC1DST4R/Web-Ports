@@ -3,178 +3,569 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web Port Game Launcher</title>
 
-<meta name="apple-mobile-web-app-title" content="Web Port Game Launcher">
+<title>Web-Ports</title>
+
+<meta name="apple-mobile-web-app-title" content="Web-Ports">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#09090b">
 
 <link rel="icon" sizes="16x16" href="Favicons/favicon-16x16.png">
 <link rel="icon" sizes="32x32" href="Favicons/favicon-32x32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="Favicons/180x180.png">
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
+html,
 body {
     margin: 0;
-    font-family: system-ui, sans-serif;
-    background: #0f0f12;
-    color: white;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
-/* ===== HERO BANNER ===== */
+body {
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    background:
+        radial-gradient(circle at 50% -20%, #25252c 0%, #101014 38%, #070709 100%);
+    color: #fff;
+    user-select: none;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.background {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    overflow: hidden;
+}
+
+.background::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.055), transparent 25%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,.035), transparent 25%);
+    filter: blur(60px);
+}
+
+.background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(5,5,7,.2),
+            rgba(5,5,7,.7) 65%,
+            #070709 100%
+        );
+}
+
+/* =========================
+   HERO
+========================= */
+
 #hero {
-    position: relative;
-    width: 100%;
-    height: 260px;
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 55vh;
+    min-height: 340px;
     overflow: hidden;
     pointer-events: none;
 }
 
 .heroImg {
     position: absolute;
-    inset: -12px;
-    width: calc(100% + 24px);
-    height: calc(100% + 24px);
+    inset: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
     object-fit: cover;
     opacity: 0;
-    transform: translateY(-6px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transform: scale(1.04);
+    filter: saturate(.85) brightness(.75);
+    transition:
+        opacity .7s ease,
+        transform 1.2s cubic-bezier(.2,.7,.2,1);
 }
 
 .heroImg.active {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
+}
+
+#hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(7,7,9,.65),
+            transparent 45%,
+            rgba(7,7,9,.25)
+        );
 }
 
 #hero::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        to bottom,
-        rgba(15,15,18,0),
-        rgba(15,15,18,0.55),
-        rgba(15,15,18,1)
-    );
+    z-index: 3;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(7,7,9,0) 20%,
+            rgba(7,7,9,.08) 40%,
+            rgba(7,7,9,.75) 75%,
+            #070709 100%
+        );
 }
 
-h1 {
-    text-align: center;
-    margin: 0.75rem 0;
-}
+/* =========================
+   TOP BAR
+========================= */
 
-/* ===== INPUT INDICATOR ===== */
-#inputIndicator {
+.topbar {
     position: fixed;
-    top: 10px;
-    left: 10px;
-    width: 32px;
-    height: 32px;
-    z-index: 100;
-}
-
-/* ===== CAROUSEL ===== */
-.carousel {
-    position: absolute;
-    bottom: 30px;
+    top: 0;
     left: 0;
     width: 100%;
+    height: 72px;
+    padding: 16px 22px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    z-index: 50;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+}
+
+.logoMark {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.13);
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.25),
+        inset 0 1px rgba(255,255,255,.08);
+}
+
+.logoMark::before {
+    content: "▶";
+    font-size: 11px;
+    transform: translateX(1px);
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(10,10,12,.48);
+    border: 1px solid rgba(255,255,255,.1);
+    backdrop-filter: blur(18px);
+    font-size: 12px;
+    color: rgba(255,255,255,.65);
+}
+
+.statusDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 12px rgba(255,255,255,.7);
+}
+
+/* =========================
+   HERO TEXT
+========================= */
+
+.heroContent {
+    position: absolute;
+    left: 50%;
+    bottom: 270px;
+    transform: translateX(-50%);
+    width: min(900px, 90%);
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.heroContent h1 {
+    margin: 0;
+    font-size: clamp(38px, 6vw, 72px);
+    line-height: .95;
+    letter-spacing: -3px;
+    text-shadow: 0 8px 35px rgba(0,0,0,.5);
+}
+
+.heroContent p {
+    margin: 15px auto 0;
+    max-width: 550px;
+    color: rgba(255,255,255,.58);
+    font-size: 14px;
+}
+
+/* =========================
+   CAROUSEL
+========================= */
+
+.carousel {
+    position: fixed;
+    left: 0;
+    bottom: 52px;
+    width: 100%;
+    height: 300px;
+    z-index: 20;
     overflow: hidden;
-    height: 400px;
 }
 
 .track {
     display: flex;
-    gap: 2rem;
-    transition: transform 0.4s ease;
+    align-items: center;
+    gap: 22px;
+    height: 100%;
+    transition:
+        transform .5s cubic-bezier(.2,.8,.2,1);
     will-change: transform;
 }
+
+.card {
+    width: 190px;
+    flex: 0 0 190px;
+    position: relative;
+    cursor: pointer;
+    opacity: .3;
+    transform: scale(.86) translateY(8px);
+    transition:
+        transform .4s cubic-bezier(.2,.8,.2,1),
+        opacity .4s ease,
+        filter .4s ease;
+    filter: saturate(.65);
+}
+
+.card.active {
+    opacity: 1;
+    transform: scale(1.08) translateY(-4px);
+    filter: saturate(1);
+    z-index: 5;
+}
+
+.card:hover:not(.active) {
+    opacity: .65;
+    transform: scale(.93);
+}
+
+.cardImage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 15px;
+    background: #151519;
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.45),
+        inset 0 1px rgba(255,255,255,.08);
+}
+
+.card.active .cardImage {
+    border-color: rgba(255,255,255,.18);
+    box-shadow:
+        0 22px 65px rgba(0,0,0,.6),
+        0 0 0 1px rgba(255,255,255,.05);
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+
+.card:hover img {
+    transform: scale(1.04);
+}
+
+.cardOverlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.8),
+            transparent 55%
+        );
+}
+
+.title {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 9px;
+    padding: 9px 10px;
+    border-radius: 9px;
+    background: rgba(0,0,0,.52);
+    border: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(10px);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+        opacity .3s ease,
+        transform .3s ease;
+}
+
+.card.active .title,
+.card:hover .title {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================
+   NAVIGATION
+========================= */
 
 .arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 3rem;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(15,15,18,.55);
+    border: 1px solid rgba(255,255,255,.12);
+    backdrop-filter: blur(18px);
+    color: white;
+    font-size: 25px;
+    z-index: 30;
     cursor: pointer;
-    user-select: none;
-    opacity: 0.6;
-    z-index: 10;
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        opacity .2s ease;
 }
 
-#prev { left: 0; }
-#next { right: 0; }
-.arrow:hover { opacity: 1; }
-
-/* ===== GAME CARDS ===== */
-.card {
-    width: 220px;
-    flex-shrink: 0;
-    text-align: center;
-    cursor: pointer;
-    opacity: 0.4;
-    transform: scale(0.9);
-    transition: transform 0.25s ease, opacity 0.25s ease;
-    position: relative;
+.arrow:hover {
+    background: rgba(255,255,255,.12);
+    transform: translateY(-50%) scale(1.08);
 }
 
-.card.active {
-    opacity: 1;
-    transform: scale(1);
+.arrow.disabled {
+    opacity: .2;
+    pointer-events: none;
 }
 
-.card:hover:not(.active) {
-    transform: scale(0.97);
-    opacity: 0.7;
+#prev {
+    left: 22px;
 }
 
-.card img {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    border-radius: 8px;
-    background: #222;
+#next {
+    right: 22px;
 }
 
-/* ===== TITLE SLIDE ===== */
-.title {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.7);
-    padding: 0.25rem 0;
-    font-size: 0.9rem;
-    transform: translateY(100%);
-    opacity: 0;
-    transition: transform 0.35s cubic-bezier(.25,1,.5,1), opacity 0.35s;
-    border-radius: 0 0 8px 8px;
+/* =========================
+   BOTTOM UI
+========================= */
+
+.bottomBar {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 40;
 }
 
-.card:hover .title,
-.card.active .title {
-    transform: translateY(0);
-    opacity: 1;
+.counter {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(12,12,15,.65);
+    border: 1px solid rgba(255,255,255,.1);
+    backdrop-filter: blur(16px);
+    font-size: 12px;
+    color: rgba(255,255,255,.6);
+}
+
+.counter strong {
+    color: white;
+}
+
+.controls {
+    display: flex;
+    gap: 6px;
+}
+
+.key {
+    min-width: 28px;
+    height: 27px;
+    padding: 0 7px;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.1);
+    color: rgba(255,255,255,.55);
+    font-size: 11px;
+}
+
+/* =========================
+   INPUT INDICATOR
+========================= */
+
+#inputIndicator {
+    position: fixed;
+    top: 82px;
+    left: 22px;
+    width: 9px;
+    height: 9px;
+    z-index: 100;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 0 15px rgba(255,255,255,.7);
+    opacity: .35;
+    transition: opacity .2s ease;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+    .topbar {
+        padding: 12px 14px;
+    }
+
+    .status {
+        display: none;
+    }
+
+    .heroContent {
+        bottom: 270px;
+    }
+
+    .heroContent h1 {
+        font-size: 42px;
+        letter-spacing: -2px;
+    }
+
+    .heroContent p {
+        font-size: 12px;
+    }
+
+    .carousel {
+        bottom: 58px;
+        height: 275px;
+    }
+
+    .card {
+        width: 165px;
+        flex-basis: 165px;
+    }
+
+    .arrow {
+        width: 42px;
+        height: 42px;
+    }
+
+    #prev {
+        left: 10px;
+    }
+
+    #next {
+        right: 10px;
+    }
+
+    .controls {
+        display: none;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<!-- HERO -->
+<div class="background"></div>
+
 <div id="hero">
-    <img id="heroA" class="heroImg" alt="Game banner">
-    <img id="heroB" class="heroImg" alt="Game banner">
+    <img id="heroA" class="heroImg" alt="">
+    <img id="heroB" class="heroImg" alt="">
+
+    <div class="heroContent">
+        <h1>Web-Ports</h1>
+        <p>Play your favorite games directly in your browser.</p>
+    </div>
 </div>
 
-<h1>🎮 Web-Ports</h1>
+<div class="topbar">
+    <div class="logo">
+        <div class="logoMark"></div>
+        <span>WEB-PORTS</span>
+    </div>
+
+    <div class="status">
+        <span class="statusDot"></span>
+        <span>Browser Games</span>
+    </div>
+</div>
 
 <div id="inputIndicator"></div>
 
 <div class="carousel">
-    <div class="arrow" id="prev">&lt;</div>
+    <div class="arrow" id="prev">‹</div>
+
     <div class="track" id="track"></div>
-    <div class="arrow" id="next">&gt;</div>
+
+    <div class="arrow" id="next">›</div>
+</div>
+
+<div class="bottomBar">
+    <div class="counter" id="counter">
+        <strong>1</strong> / 22
+    </div>
+
+    <div class="controls">
+        <div class="key">←</div>
+        <div class="key">→</div>
+        <div class="key">ENTER</div>
+    </div>
 </div>
 
 <script>
@@ -183,95 +574,239 @@ const REPO = "Web-Ports";
 const BASE_URL = "https://ac1dst4r.github.io/Web-Ports/";
 
 const games = [
-  "Amanda the Adventurer","Andy's Apple Farm","Baldi's Basics Plus",
-  "Baldi's Basics Remastered","Bendy","Bloodmoney","Buckshot Roulette",
-  "Dead Plate","Deltatraveler","Don't Take This Cat Home",
-  "Getting Over It","Happy Sheepies","Hotline Miami","Omori",
-  "Pizza Tower","Raft","Sonic","That's Not My Neighbor",
-  "The Man In The Window","Undertale Yellow","Webfishing"
+    "Amanda the Adventurer",
+    "Andy's Apple Farm",
+    "Baldi's Basics Plus",
+    "Baldi's Basics Remastered",
+    "Bendy",
+    "Bloodmoney",
+    "Buckshot Roulette",
+    "Dead Plate",
+    "Deltatraveler",
+    "Don't Take This Cat Home",
+    "Getting Over It",
+    "Happy Sheepies",
+    "Hotline Miami",
+    "Omori",
+    "Pizza Tower",
+    "Raft",
+    "Sonic",
+    "That's Not My Neighbor",
+    "The Man In The Window",
+    "Undertale Yellow",
+    "Webfishing",
+    "Black Knife Simulator"
 ];
 
-const exts = ["png","jpg","jpeg"];
-const bannerExts = ["png","jpg","jpeg"];
+const imageExtensions = ["png", "jpg", "jpeg"];
 
 const track = document.getElementById("track");
 const heroA = document.getElementById("heroA");
 const heroB = document.getElementById("heroB");
+const counter = document.getElementById("counter");
+const inputIndicator = document.getElementById("inputIndicator");
+const prev = document.getElementById("prev");
+const next = document.getElementById("next");
 
 let heroFront = heroA;
 let heroBack = heroB;
 let current = 0;
 
-/* ===== LOAD BANNER ===== */
-function loadBanner(index) {
-    let i = 0;
-    function tryNext() {
-        if (i >= bannerExts.length) return;
-        heroBack.src =
-          `https://raw.githubusercontent.com/${USER}/${REPO}/main/Banner%20Art/${index+1}.${bannerExts[i++]}`;
+function rawURL(path) {
+    return `https://raw.githubusercontent.com/${USER}/${REPO}/main/${path}`;
+}
+
+function loadImageWithFallback(img, paths, index = 0) {
+    if (index >= paths.length) {
+        img.removeAttribute("src");
+        return;
     }
-    heroBack.onerror = tryNext;
+
+    img.onerror = () => {
+        loadImageWithFallback(img, paths, index + 1);
+    };
+
+    img.src = rawURL(paths[index]);
+}
+
+function loadBanner(index) {
+    const number = index + 1;
+
+    const paths = imageExtensions.map(
+        ext => `Banner Art/${number}.${ext}`
+    );
+
     heroBack.onload = () => {
         heroBack.classList.add("active");
         heroFront.classList.remove("active");
+
         [heroFront, heroBack] = [heroBack, heroFront];
     };
-    tryNext();
+
+    loadImageWithFallback(heroBack, paths);
 }
 
-/* ===== BUILD CARDS ===== */
-games.forEach((name,i)=>{
+function createCard(name, index) {
     const card = document.createElement("div");
     card.className = "card";
 
+    const imageContainer = document.createElement("div");
+    imageContainer.className = "cardImage";
+
     const img = document.createElement("img");
-    let e = 0;
-    function loadImg(){
-        if(e>=exts.length) return;
-        img.src =
-          `https://raw.githubusercontent.com/${USER}/${REPO}/main/Cover%20Art/${i+1}.${exts[e++]}`;
-    }
-    img.onerror = loadImg;
-    loadImg();
+    img.alt = name;
+    img.loading = "lazy";
+
+    const paths = imageExtensions.map(
+        ext => `Cover Art/${index + 1}.${ext}`
+    );
+
+    loadImageWithFallback(img, paths);
+
+    const overlay = document.createElement("div");
+    overlay.className = "cardOverlay";
 
     const title = document.createElement("div");
     title.className = "title";
     title.textContent = name;
 
-    card.append(img,title);
-    card.onclick = ()=> {
-        location.href = BASE_URL + encodeURIComponent(name) + "/";
-    };
+    imageContainer.appendChild(img);
+    imageContainer.appendChild(overlay);
+    imageContainer.appendChild(title);
 
-    track.appendChild(card);
+    card.appendChild(imageContainer);
+
+    card.addEventListener("click", () => {
+        openGame(index);
+    });
+
+    return card;
+}
+
+games.forEach((game, index) => {
+    track.appendChild(createCard(game, index));
 });
 
-/* ===== UPDATE ===== */
-function update(){
-    const cards = document.querySelectorAll(".card");
-    cards.forEach((c,i)=>c.classList.toggle("active",i===current));
+function openGame(index) {
+    location.href =
+        BASE_URL +
+        encodeURIComponent(games[index]) +
+        "/";
+}
 
-    const w = cards[0].offsetWidth + 32;
+function update() {
+    const cards = document.querySelectorAll(".card");
+
+    if (!cards.length) return;
+
+    cards.forEach((card, index) => {
+        card.classList.toggle("active", index === current);
+    });
+
+    const gap = 22;
+    const cardWidth = cards[0].getBoundingClientRect().width;
+    const step = cardWidth + gap;
+
+    const center =
+        window.innerWidth / 2 -
+        cardWidth / 2 -
+        current * step;
+
     track.style.transform =
-      `translateX(${innerWidth/2 - w/2 - current*w}px)`;
+        `translateX(${center}px)`;
+
+    counter.innerHTML =
+        `<strong>${current + 1}</strong> / ${games.length}`;
+
+    prev.classList.toggle(
+        "disabled",
+        current === 0
+    );
+
+    next.classList.toggle(
+        "disabled",
+        current === games.length - 1
+    );
 
     loadBanner(current);
 }
 
-/* ===== NAVIGATION ===== */
-document.getElementById("prev").onclick=()=>{ if(current>0){current--;update();}};
-document.getElementById("next").onclick=()=>{ if(current<games.length-1){current++;update();}};
+function move(direction) {
+    const nextIndex = current + direction;
 
-document.addEventListener("keydown",e=>{
-    if(e.key==="ArrowLeft"&&current>0){current--;update();}
-    if(e.key==="ArrowRight"&&current<games.length-1){current++;update();}
-    if(e.key==="Enter"){
-        location.href = BASE_URL + encodeURIComponent(games[current]) + "/";
+    if (
+        nextIndex < 0 ||
+        nextIndex >= games.length
+    ) {
+        return;
+    }
+
+    current = nextIndex;
+    update();
+
+    inputIndicator.style.opacity = "1";
+
+    clearTimeout(window.inputFade);
+
+    window.inputFade = setTimeout(() => {
+        inputIndicator.style.opacity = ".35";
+    }, 500);
+}
+
+prev.addEventListener("click", () => move(-1));
+next.addEventListener("click", () => move(1));
+
+document.addEventListener("keydown", event => {
+    if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        move(-1);
+    }
+
+    if (event.key === "ArrowRight") {
+        event.preventDefault();
+        move(1);
+    }
+
+    if (event.key === "Enter") {
+        event.preventDefault();
+        openGame(current);
+    }
+
+    if (event.key === "Home") {
+        current = 0;
+        update();
+    }
+
+    if (event.key === "End") {
+        current = games.length - 1;
+        update();
     }
 });
 
-window.onload = update;
-window.onresize = update;
+let touchStartX = 0;
+
+document.addEventListener("touchstart", event => {
+    touchStartX = event.touches[0].clientX;
+});
+
+document.addEventListener("touchend", event => {
+    const touchEndX = event.changedTouches[0].clientX;
+    const difference = touchStartX - touchEndX;
+
+    if (Math.abs(difference) < 50) return;
+
+    if (difference > 0) {
+        move(1);
+    } else {
+        move(-1);
+    }
+});
+
+window.addEventListener("resize", update);
+
+window.addEventListener("load", () => {
+    update();
+});
 </script>
 
 </body>
