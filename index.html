@@ -3,811 +3,280 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Web-Ports</title>
-
+<meta name="theme-color" content="#08090c">
 <meta name="apple-mobile-web-app-title" content="Web-Ports">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#09090b">
-
+<title>Web-Ports | Browser Game Collection</title>
 <link rel="icon" sizes="16x16" href="Favicons/favicon-16x16.png">
 <link rel="icon" sizes="32x32" href="Favicons/favicon-32x32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="Favicons/180x180.png">
-
 <style>
-* {
-    box-sizing: border-box;
+:root{color-scheme:dark;--bg:#08090c;--panel:#11141a;--line:#ffffff18;--muted:#a4a8b1;--white:#f5f6f8}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;width:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--white)}
+body{min-height:100vh;overflow:hidden;user-select:none;background:radial-gradient(ellipse at 50% -10%,#272a32 0,#101116 42%,#08090c 78%)}
+button{font:inherit}
+.ambient{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.ambient:before{content:"";position:absolute;inset:-20%;background:radial-gradient(circle at 18% 25%,#ffffff12,transparent 25%),radial-gradient(circle at 82% 65%,#aeb7cc0c,transparent 30%);filter:blur(55px)}
+.hero{position:absolute;inset:0 0 auto;height:62vh;min-height:360px;overflow:hidden;pointer-events:none}
+.hero-image{position:absolute;inset:-18px;width:calc(100% + 36px);height:calc(100% + 36px);object-fit:cover;opacity:0;transform:scale(1.035);filter:brightness(.55) saturate(.82);transition:opacity .65s ease,transform 1s ease}
+.hero-image.active{opacity:1;transform:scale(1)}
+.hero:before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,#08090caa,transparent 50%,#08090c55)}
+.hero:after{content:"";position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,#08090c12 0%,#08090c22 40%,#08090cdd 78%,#08090c 100%)}
+.topbar{position:fixed;z-index:20;top:0;left:0;right:0;height:76px;padding:0 clamp(18px,4vw,54px);display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-size:.86rem;font-weight:800;letter-spacing:.12em}
+.brand-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid #ffffff28;border-radius:10px;background:#ffffff12;backdrop-filter:blur(15px);font-size:12px}
+.statuses{display:flex;align-items:center;gap:9px}
+.pill{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#0b0c10a8;color:#c0c3ca;font-size:.72rem;letter-spacing:.04em;backdrop-filter:blur(14px)}
+.dot{width:7px;height:7px;border-radius:50%;background:#d9dde5;box-shadow:0 0 12px #ffffffa0}
+.hero-copy{position:absolute;z-index:5;top:20%;left:50%;width:min(760px,90%);transform:translateX(-50%);text-align:center}
+.kicker{color:#d1d3d9a8;font-size:.72rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase}
+h1{margin:15px 0 12px;font-size:clamp(3rem,8vw,6.5rem);line-height:.9;letter-spacing:-.085em;text-shadow:0 8px 38px #0009}
+.subtitle{margin:0;color:#d1d3d9b8;font-size:clamp(.86rem,1.5vw,1.02rem);letter-spacing:.015em}
+.selection{position:absolute;z-index:10;top:48%;left:50%;width:min(650px,88%);transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.selection-label{color:#ffffff90;font-size:.69rem;letter-spacing:.2em;text-transform:uppercase}
+.selection h2{margin:10px 0 8px;font-size:clamp(1.55rem,4vw,2.65rem);letter-spacing:-.05em;text-shadow:0 6px 24px #0009}
+.selection p{margin:0;color:#ffffff8c;font-size:.82rem}
+.carousel{position:fixed;z-index:15;left:0;right:0;bottom:64px;height:245px;overflow:hidden}
+.track{height:100%;display:flex;align-items:center;gap:17px;transition:transform .42s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.card{position:relative;flex:0 0 150px;width:150px;cursor:pointer;opacity:.42;transform:scale(.88);transition:transform .3s ease,opacity .3s ease,filter .3s ease;filter:saturate(.7);outline:none}
+.card.active{opacity:1;transform:scale(1.06);filter:saturate(1);z-index:2}
+.card:focus-visible .cover{outline:2px solid #fff;outline-offset:4px}
+.cover{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;border:1px solid #ffffff20;border-radius:13px;background:linear-gradient(145deg,#252a34,#11141a);box-shadow:0 18px 42px #0009}
+.cover img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.card:hover .cover img{transform:scale(1.045)}
+.cover:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#000b)}
+.card-name{position:absolute;left:9px;right:9px;bottom:9px;z-index:2;font-size:.73rem;font-weight:700;text-align:center;text-shadow:0 2px 8px #000;line-height:1.3}
+.arrow{position:absolute;top:50%;z-index:5;transform:translateY(-50%);width:43px;height:43px;display:grid;place-items:center;border:1px solid #ffffff22;border-radius:50%;background:#101116b8;color:#fff;font-size:24px;cursor:pointer;backdrop-filter:blur(14px);transition:background .2s,opacity .2s}
+.arrow:hover{background:#ffffff22}
+.arrow:disabled{opacity:.18;cursor:default}
+#prev{left:clamp(10px,3vw,34px)}#next{right:clamp(10px,3vw,34px)}
+.bottom{position:fixed;z-index:20;left:50%;bottom:17px;transform:translateX(-50%);display:flex;align-items:center;gap:13px;white-space:nowrap}
+.counter,.hint{padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:#101116b8;color:#aeb2bb;font-size:.7rem;backdrop-filter:blur(12px)}
+.counter strong{color:#fff;font-variant-numeric:tabular-nums}
+.keys{display:flex;gap:5px}
+.key{min-width:25px;height:25px;display:grid;place-items:center;padding:0 6px;border:1px solid #ffffff20;border-radius:6px;background:#ffffff0b;color:#b9bdc5;font-size:.65rem}
+.mobile-note{display:none}
+@media(max-width:700px){
+ body{overflow:hidden}
+ .topbar{height:62px;padding:0 15px}
+ .statuses .pill:first-child{display:none}
+ .hero{height:55vh;min-height:320px}
+ .hero-copy{top:18%}
+ .selection{top:40%}
+ .carousel{bottom:74px;height:220px;overflow:visible}
+ .track{overflow:visible}
+ .card{flex-basis:128px;width:128px}
+ .arrow{width:36px;height:36px}
+ .bottom{bottom:14px;gap:7px}
+ .keys{display:none}
+ .hint{display:none}
+ .mobile-note{display:block;position:fixed;z-index:30;top:70px;left:50%;transform:translateX(-50%);padding:6px 10px;border:1px solid #ffffff20;border-radius:999px;background:#101116a8;color:#aeb2bb;font-size:.65rem;white-space:nowrap}
 }
-
-html,
-body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-body {
-    font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    background:
-        radial-gradient(circle at 50% -20%, #25252c 0%, #101014 38%, #070709 100%);
-    color: #fff;
-    user-select: none;
-}
-
-/* =========================
-   BACKGROUND
-========================= */
-
-.background {
-    position: fixed;
-    inset: 0;
-    z-index: -10;
-    overflow: hidden;
-}
-
-.background::before {
-    content: "";
-    position: absolute;
-    inset: -20%;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,.055), transparent 25%),
-        radial-gradient(circle at 80% 70%, rgba(255,255,255,.035), transparent 25%);
-    filter: blur(60px);
-}
-
-.background::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(5,5,7,.2),
-            rgba(5,5,7,.7) 65%,
-            #070709 100%
-        );
-}
-
-/* =========================
-   HERO
-========================= */
-
-#hero {
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 55vh;
-    min-height: 340px;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.heroImg {
-    position: absolute;
-    inset: -20px;
-    width: calc(100% + 40px);
-    height: calc(100% + 40px);
-    object-fit: cover;
-    opacity: 0;
-    transform: scale(1.04);
-    filter: saturate(.85) brightness(.75);
-    transition:
-        opacity .7s ease,
-        transform 1.2s cubic-bezier(.2,.7,.2,1);
-}
-
-.heroImg.active {
-    opacity: 1;
-    transform: scale(1);
-}
-
-#hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background:
-        linear-gradient(
-            90deg,
-            rgba(7,7,9,.65),
-            transparent 45%,
-            rgba(7,7,9,.25)
-        );
-}
-
-#hero::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(7,7,9,0) 20%,
-            rgba(7,7,9,.08) 40%,
-            rgba(7,7,9,.75) 75%,
-            #070709 100%
-        );
-}
-
-/* =========================
-   TOP BAR
-========================= */
-
-.topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 72px;
-    padding: 16px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 50;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 17px;
-    font-weight: 800;
-    letter-spacing: -.3px;
-}
-
-.logoMark {
-    width: 34px;
-    height: 34px;
-    display: grid;
-    place-items: center;
-    border-radius: 10px;
-    background: rgba(255,255,255,.1);
-    border: 1px solid rgba(255,255,255,.13);
-    box-shadow:
-        0 8px 30px rgba(0,0,0,.25),
-        inset 0 1px rgba(255,255,255,.08);
-}
-
-.logoMark::before {
-    content: "▶";
-    font-size: 11px;
-    transform: translateX(1px);
-}
-
-.status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: rgba(10,10,12,.48);
-    border: 1px solid rgba(255,255,255,.1);
-    backdrop-filter: blur(18px);
-    font-size: 12px;
-    color: rgba(255,255,255,.65);
-}
-
-.statusDot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 12px rgba(255,255,255,.7);
-}
-
-/* =========================
-   HERO TEXT
-========================= */
-
-.heroContent {
-    position: absolute;
-    left: 50%;
-    bottom: 270px;
-    transform: translateX(-50%);
-    width: min(900px, 90%);
-    text-align: center;
-    z-index: 10;
-    pointer-events: none;
-}
-
-.heroContent h1 {
-    margin: 0;
-    font-size: clamp(38px, 6vw, 72px);
-    line-height: .95;
-    letter-spacing: -3px;
-    text-shadow: 0 8px 35px rgba(0,0,0,.5);
-}
-
-.heroContent p {
-    margin: 15px auto 0;
-    max-width: 550px;
-    color: rgba(255,255,255,.58);
-    font-size: 14px;
-}
-
-/* =========================
-   CAROUSEL
-========================= */
-
-.carousel {
-    position: fixed;
-    left: 0;
-    bottom: 52px;
-    width: 100%;
-    height: 300px;
-    z-index: 20;
-    overflow: hidden;
-}
-
-.track {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-    height: 100%;
-    transition:
-        transform .5s cubic-bezier(.2,.8,.2,1);
-    will-change: transform;
-}
-
-.card {
-    width: 190px;
-    flex: 0 0 190px;
-    position: relative;
-    cursor: pointer;
-    opacity: .3;
-    transform: scale(.86) translateY(8px);
-    transition:
-        transform .4s cubic-bezier(.2,.8,.2,1),
-        opacity .4s ease,
-        filter .4s ease;
-    filter: saturate(.65);
-}
-
-.card.active {
-    opacity: 1;
-    transform: scale(1.08) translateY(-4px);
-    filter: saturate(1);
-    z-index: 5;
-}
-
-.card:hover:not(.active) {
-    opacity: .65;
-    transform: scale(.93);
-}
-
-.cardImage {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-    border-radius: 15px;
-    background: #151519;
-    border: 1px solid rgba(255,255,255,.08);
-    box-shadow:
-        0 15px 45px rgba(0,0,0,.45),
-        inset 0 1px rgba(255,255,255,.08);
-}
-
-.card.active .cardImage {
-    border-color: rgba(255,255,255,.18);
-    box-shadow:
-        0 22px 65px rgba(0,0,0,.6),
-        0 0 0 1px rgba(255,255,255,.05);
-}
-
-.card img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    transition: transform .5s ease;
-}
-
-.card:hover img {
-    transform: scale(1.04);
-}
-
-.cardOverlay {
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,.8),
-            transparent 55%
-        );
-}
-
-.title {
-    position: absolute;
-    left: 10px;
-    right: 10px;
-    bottom: 9px;
-    padding: 9px 10px;
-    border-radius: 9px;
-    background: rgba(0,0,0,.52);
-    border: 1px solid rgba(255,255,255,.08);
-    backdrop-filter: blur(10px);
-    font-size: 12px;
-    font-weight: 700;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    opacity: 0;
-    transform: translateY(8px);
-    transition:
-        opacity .3s ease,
-        transform .3s ease;
-}
-
-.card.active .title,
-.card:hover .title {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* =========================
-   NAVIGATION
-========================= */
-
-.arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 52px;
-    height: 52px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: rgba(15,15,18,.55);
-    border: 1px solid rgba(255,255,255,.12);
-    backdrop-filter: blur(18px);
-    color: white;
-    font-size: 25px;
-    z-index: 30;
-    cursor: pointer;
-    transition:
-        background .2s ease,
-        transform .2s ease,
-        opacity .2s ease;
-}
-
-.arrow:hover {
-    background: rgba(255,255,255,.12);
-    transform: translateY(-50%) scale(1.08);
-}
-
-.arrow.disabled {
-    opacity: .2;
-    pointer-events: none;
-}
-
-#prev {
-    left: 22px;
-}
-
-#next {
-    right: 22px;
-}
-
-/* =========================
-   BOTTOM UI
-========================= */
-
-.bottomBar {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    z-index: 40;
-}
-
-.counter {
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: rgba(12,12,15,.65);
-    border: 1px solid rgba(255,255,255,.1);
-    backdrop-filter: blur(16px);
-    font-size: 12px;
-    color: rgba(255,255,255,.6);
-}
-
-.counter strong {
-    color: white;
-}
-
-.controls {
-    display: flex;
-    gap: 6px;
-}
-
-.key {
-    min-width: 28px;
-    height: 27px;
-    padding: 0 7px;
-    display: grid;
-    place-items: center;
-    border-radius: 7px;
-    background: rgba(255,255,255,.07);
-    border: 1px solid rgba(255,255,255,.1);
-    color: rgba(255,255,255,.55);
-    font-size: 11px;
-}
-
-/* =========================
-   INPUT INDICATOR
-========================= */
-
-#inputIndicator {
-    position: fixed;
-    top: 82px;
-    left: 22px;
-    width: 9px;
-    height: 9px;
-    z-index: 100;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 0 15px rgba(255,255,255,.7);
-    opacity: .35;
-    transition: opacity .2s ease;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 700px) {
-    .topbar {
-        padding: 12px 14px;
-    }
-
-    .status {
-        display: none;
-    }
-
-    .heroContent {
-        bottom: 270px;
-    }
-
-    .heroContent h1 {
-        font-size: 42px;
-        letter-spacing: -2px;
-    }
-
-    .heroContent p {
-        font-size: 12px;
-    }
-
-    .carousel {
-        bottom: 58px;
-        height: 275px;
-    }
-
-    .card {
-        width: 165px;
-        flex-basis: 165px;
-    }
-
-    .arrow {
-        width: 42px;
-        height: 42px;
-    }
-
-    #prev {
-        left: 10px;
-    }
-
-    #next {
-        right: 10px;
-    }
-
-    .controls {
-        display: none;
-    }
-}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
-
 <body>
-
-<div class="background"></div>
-
-<div id="hero">
-    <img id="heroA" class="heroImg" alt="">
-    <img id="heroB" class="heroImg" alt="">
-
-    <div class="heroContent">
-        <h1>Web-Ports</h1>
-        <p>Play your favorite games directly in your browser.</p>
-    </div>
+<div class="ambient"></div>
+<section class="hero" aria-hidden="true">
+  <img id="heroA" class="hero-image" alt="">
+  <img id="heroB" class="hero-image" alt="">
+</section>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">▶</span><span>WEB-PORTS</span></div>
+  <div class="statuses">
+    <div class="pill"><span class="dot"></span><span>Browser collection</span></div>
+    <div class="pill" id="inputMode">Keyboard ready</div>
+  </div>
+</header>
+<div class="mobile-note">PC recommended for the best experience</div>
+<div class="hero-copy">
+  <div class="kicker">The browser arcade</div>
+  <h1>Web-Ports</h1>
+  <p class="subtitle">A collection of games, ready to launch.</p>
 </div>
-
-<div class="topbar">
-    <div class="logo">
-        <div class="logoMark"></div>
-        <span>WEB-PORTS</span>
-    </div>
-
-    <div class="status">
-        <span class="statusDot"></span>
-        <span>Browser Games</span>
-    </div>
-</div>
-
-<div id="inputIndicator"></div>
-
-<div class="carousel">
-    <div class="arrow" id="prev">‹</div>
-
-    <div class="track" id="track"></div>
-
-    <div class="arrow" id="next">›</div>
-</div>
-
-<div class="bottomBar">
-    <div class="counter" id="counter">
-        <strong>1</strong> / 22
-    </div>
-
-    <div class="controls">
-        <div class="key">←</div>
-        <div class="key">→</div>
-        <div class="key">ENTER</div>
-    </div>
-</div>
-
+<section class="selection" aria-live="polite">
+  <div class="selection-label">Selected game</div>
+  <h2 id="selectedTitle">Amanda the Adventurer</h2>
+  <p id="selectedMeta">01 / 22 · Press Enter to launch</p>
+</section>
+<section class="carousel" aria-label="Choose a game">
+  <button class="arrow" id="prev" type="button" aria-label="Previous game">‹</button>
+  <div class="track" id="track"></div>
+  <button class="arrow" id="next" type="button" aria-label="Next game">›</button>
+</section>
+<footer class="bottom">
+  <div class="counter"><strong id="currentCount">01</strong> / <span id="totalCount">22</span></div>
+  <div class="keys"><span class="key">←</span><span class="key">→</span><span class="key">ENTER</span></div>
+  <div class="hint">Arrow keys to navigate · Enter to play</div>
+</footer>
 <script>
-const USER = "AC1DST4R";
-const REPO = "Web-Ports";
-const BASE_URL = "https://ac1dst4r.github.io/Web-Ports/";
-
-const games = [
-    "Amanda the Adventurer",
-    "Andy's Apple Farm",
-    "Baldi's Basics Plus",
-    "Baldi's Basics Remastered",
-    "Bendy",
-    "Bloodmoney",
-    "Buckshot Roulette",
-    "Dead Plate",
-    "Deltatraveler",
-    "Don't Take This Cat Home",
-    "Getting Over It",
-    "Happy Sheepies",
-    "Hotline Miami",
-    "Omori",
-    "Pizza Tower",
-    "Raft",
-    "Sonic",
-    "That's Not My Neighbor",
-    "The Man In The Window",
-    "Undertale Yellow",
-    "Webfishing",
-    "Black Knife Simulator"
+const BASE_URL="https://ac1dst4r.github.io/Web-Ports/";
+const RAW_URL="https://raw.githubusercontent.com/AC1DST4R/Web-Ports/main/";
+const games=[
+  "Amanda the Adventurer",
+  "Andy's Apple Farm",
+  "Baldi's Basics Plus",
+  "Baldi's Basics Remastered",
+  "Bendy",
+  "Bloodmoney",
+  "Buckshot Roulette",
+  "Dead Plate",
+  "Deltatraveler",
+  "Don't Take This Cat Home",
+  "Getting Over It",
+  "Happy Sheepies",
+  "Hotline Miami",
+  "Omori",
+  "Pizza Tower",
+  "Raft",
+  "Sonic",
+  "That's Not My Neighbor",
+  "The Man In The Window",
+  "Undertale Yellow",
+  "Webfishing",
+  "Black Knife Simulator"
 ];
+const extensions=["png","jpg","jpeg","webp"];
+const track=document.getElementById("track");
+const heroA=document.getElementById("heroA");
+const heroB=document.getElementById("heroB");
+const selectedTitle=document.getElementById("selectedTitle");
+const selectedMeta=document.getElementById("selectedMeta");
+const currentCount=document.getElementById("currentCount");
+const totalCount=document.getElementById("totalCount");
+const prev=document.getElementById("prev");
+const next=document.getElementById("next");
+const inputMode=document.getElementById("inputMode");
+let current=0;
+let heroFront=heroA;
+let heroBack=heroB;
+let touchStart=0;
+let inputTimer;
 
-const imageExtensions = ["png", "jpg", "jpeg"];
+totalCount.textContent=String(games.length).padStart(2,"0");
 
-const track = document.getElementById("track");
-const heroA = document.getElementById("heroA");
-const heroB = document.getElementById("heroB");
-const counter = document.getElementById("counter");
-const inputIndicator = document.getElementById("inputIndicator");
-const prev = document.getElementById("prev");
-const next = document.getElementById("next");
-
-let heroFront = heroA;
-let heroBack = heroB;
-let current = 0;
-
-function rawURL(path) {
-    return `https://raw.githubusercontent.com/${USER}/${REPO}/main/${path}`;
+function asset(path){return RAW_URL+path.split("/").map(encodeURIComponent).join("/")}
+function fallbackImage(image,paths,index=0){
+  if(index>=paths.length){image.style.display="none";return}
+  image.onerror=()=>fallbackImage(image,paths,index+1);
+  image.src=asset(paths[index]);
 }
-
-function loadImageWithFallback(img, paths, index = 0) {
-    if (index >= paths.length) {
-        img.removeAttribute("src");
-        return;
-    }
-
-    img.onerror = () => {
-        loadImageWithFallback(img, paths, index + 1);
-    };
-
-    img.src = rawURL(paths[index]);
+function imagePaths(folder,index){return extensions.map(ext=>folder+"/"+(index+1)+"."+ext)}
+function makeCard(name,index){
+  const card=document.createElement("button");
+  card.type="button";
+  card.className="card";
+  card.setAttribute("aria-label","Select "+name);
+  const cover=document.createElement("div");
+  cover.className="cover";
+  const image=document.createElement("img");
+  image.alt="";
+  image.loading=index<5?"eager":"lazy";
+  fallbackImage(image,imagePaths("Cover Art",index));
+  const label=document.createElement("span");
+  label.className="card-name";
+  label.textContent=name;
+  cover.append(image,label);
+  card.append(cover);
+  card.addEventListener("click",()=>select(index,true));
+  track.append(card);
+  return card;
 }
+games.forEach(makeCard);
 
-function loadBanner(index) {
-    const number = index + 1;
-
-    const paths = imageExtensions.map(
-        ext => `Banner Art/${number}.${ext}`
-    );
-
-    heroBack.onload = () => {
-        heroBack.classList.add("active");
-        heroFront.classList.remove("active");
-
-        [heroFront, heroBack] = [heroBack, heroFront];
-    };
-
-    loadImageWithFallback(heroBack, paths);
+function loadBanner(index){
+  const paths=imagePaths("Banner Art",index);
+  heroBack.onload=()=>{
+    heroBack.classList.add("active");
+    heroFront.classList.remove("active");
+    [heroFront,heroBack]=[heroBack,heroFront];
+  };
+  heroBack.onerror=()=>{
+    heroBack.onload=null;
+    heroBack.onerror=null;
+    heroBack.removeAttribute("src");
+    heroBack.style.backgroundImage="none";
+    fallbackHero(index);
+  };
+  heroBack.src=asset(paths[0]);
 }
-
-function createCard(name, index) {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const imageContainer = document.createElement("div");
-    imageContainer.className = "cardImage";
-
-    const img = document.createElement("img");
-    img.alt = name;
-    img.loading = "lazy";
-
-    const paths = imageExtensions.map(
-        ext => `Cover Art/${index + 1}.${ext}`
-    );
-
-    loadImageWithFallback(img, paths);
-
-    const overlay = document.createElement("div");
-    overlay.className = "cardOverlay";
-
-    const title = document.createElement("div");
-    title.className = "title";
-    title.textContent = name;
-
-    imageContainer.appendChild(img);
-    imageContainer.appendChild(overlay);
-    imageContainer.appendChild(title);
-
-    card.appendChild(imageContainer);
-
-    card.addEventListener("click", () => {
-        openGame(index);
-    });
-
-    return card;
+function fallbackHero(index){
+  const image=new Image();
+  const paths=imagePaths("Cover Art",index);
+  let attempt=0;
+  image.onload=()=>{
+    heroBack.src=image.src;
+    heroBack.classList.add("active");
+    heroFront.classList.remove("active");
+    [heroFront,heroBack]=[heroBack,heroFront];
+  };
+  image.onerror=()=>{
+    attempt++;
+    if(attempt<paths.length)image.src=asset(paths[attempt]);
+  };
+  image.src=asset(paths[0]);
 }
-
-games.forEach((game, index) => {
-    track.appendChild(createCard(game, index));
+function update(){
+  const cards=[...track.children];
+  cards.forEach((card,index)=>{
+    card.classList.toggle("active",index===current);
+    card.setAttribute("aria-pressed",String(index===current));
+  });
+  const cardWidth=cards[0]?.getBoundingClientRect().width||150;
+  const gap=17;
+  const offset=window.innerWidth/2-cardWidth/2-current*(cardWidth+gap);
+  track.style.transform="translateX("+offset+"px)";
+  selectedTitle.textContent=games[current];
+  selectedMeta.textContent=String(current+1).padStart(2,"0")+" / "+String(games.length).padStart(2,"0")+" · Press Enter to launch";
+  currentCount.textContent=String(current+1).padStart(2,"0");
+  prev.disabled=current===0;
+  next.disabled=current===games.length-1;
+  loadBanner(current);
+}
+function select(index,announce=false){
+  current=Math.max(0,Math.min(games.length-1,index));
+  update();
+  if(announce)showInput("Mouse / touch");
+}
+function move(direction){select(current+direction,true)}
+function launch(){location.href=BASE_URL+encodeURIComponent(games[current])+"/"}
+function showInput(label){
+  inputMode.textContent=label;
+  clearTimeout(inputTimer);
+  inputTimer=setTimeout(()=>inputMode.textContent="Input ready",1300);
+}
+prev.addEventListener("click",()=>move(-1));
+next.addEventListener("click",()=>move(1));
+document.addEventListener("keydown",event=>{
+  if(["ArrowLeft","ArrowRight","Enter","Home","End"].includes(event.key))event.preventDefault();
+  if(event.key==="ArrowLeft"){move(-1);showInput("Keyboard")}
+  if(event.key==="ArrowRight"){move(1);showInput("Keyboard")}
+  if(event.key==="Enter")launch();
+  if(event.key==="Home")select(0,true);
+  if(event.key==="End")select(games.length-1,true);
 });
-
-function openGame(index) {
-    location.href =
-        BASE_URL +
-        encodeURIComponent(games[index]) +
-        "/";
+document.addEventListener("touchstart",event=>touchStart=event.touches[0].clientX,{passive:true});
+document.addEventListener("touchend",event=>{
+  const delta=touchStart-event.changedTouches[0].clientX;
+  if(Math.abs(delta)>45){move(delta>0?1:-1);showInput("Touch")}
+},{passive:true});
+let lastPad=false;
+function pollGamepad(){
+  const pads=navigator.getGamepads?navigator.getGamepads():[];
+  const pad=[...pads].find(Boolean);
+  if(!pad){lastPad=false;return}
+  const left=pad.axes[0]<-.65||pad.buttons[14]?.pressed;
+  const right=pad.axes[0]>.65||pad.buttons[15]?.pressed;
+  if(left&&!lastPad){move(-1);showInput("Gamepad")}
+  if(right&&!lastPad){move(1);showInput("Gamepad")}
+  if(pad.buttons[0]?.pressed)launch();
+  lastPad=Boolean(left||right);
 }
-
-function update() {
-    const cards = document.querySelectorAll(".card");
-
-    if (!cards.length) return;
-
-    cards.forEach((card, index) => {
-        card.classList.toggle("active", index === current);
-    });
-
-    const gap = 22;
-    const cardWidth = cards[0].getBoundingClientRect().width;
-    const step = cardWidth + gap;
-
-    const center =
-        window.innerWidth / 2 -
-        cardWidth / 2 -
-        current * step;
-
-    track.style.transform =
-        `translateX(${center}px)`;
-
-    counter.innerHTML =
-        `<strong>${current + 1}</strong> / ${games.length}`;
-
-    prev.classList.toggle(
-        "disabled",
-        current === 0
-    );
-
-    next.classList.toggle(
-        "disabled",
-        current === games.length - 1
-    );
-
-    loadBanner(current);
-}
-
-function move(direction) {
-    const nextIndex = current + direction;
-
-    if (
-        nextIndex < 0 ||
-        nextIndex >= games.length
-    ) {
-        return;
-    }
-
-    current = nextIndex;
-    update();
-
-    inputIndicator.style.opacity = "1";
-
-    clearTimeout(window.inputFade);
-
-    window.inputFade = setTimeout(() => {
-        inputIndicator.style.opacity = ".35";
-    }, 500);
-}
-
-prev.addEventListener("click", () => move(-1));
-next.addEventListener("click", () => move(1));
-
-document.addEventListener("keydown", event => {
-    if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        move(-1);
-    }
-
-    if (event.key === "ArrowRight") {
-        event.preventDefault();
-        move(1);
-    }
-
-    if (event.key === "Enter") {
-        event.preventDefault();
-        openGame(current);
-    }
-
-    if (event.key === "Home") {
-        current = 0;
-        update();
-    }
-
-    if (event.key === "End") {
-        current = games.length - 1;
-        update();
-    }
-});
-
-let touchStartX = 0;
-
-document.addEventListener("touchstart", event => {
-    touchStartX = event.touches[0].clientX;
-});
-
-document.addEventListener("touchend", event => {
-    const touchEndX = event.changedTouches[0].clientX;
-    const difference = touchStartX - touchEndX;
-
-    if (Math.abs(difference) < 50) return;
-
-    if (difference > 0) {
-        move(1);
-    } else {
-        move(-1);
-    }
-});
-
-window.addEventListener("resize", update);
-
-window.addEventListener("load", () => {
-    update();
-});
+window.addEventListener("gamepadconnected",()=>showInput("Gamepad connected"));
+window.addEventListener("resize",update);
+setInterval(pollGamepad,100);
+update();
 </script>
-
 </body>
 </html>
