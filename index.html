@@ -206,10 +206,13 @@ function fallbackHero(index){
   const paths=imagePaths("Cover Art",index);
   let attempt=0;
   image.onload=()=>{
+    heroBack.onload=()=>{
+      heroBack.classList.add("active");
+      heroFront.classList.remove("active");
+      [heroFront,heroBack]=[heroBack,heroFront];
+    };
+    heroBack.onerror=null;
     heroBack.src=image.src;
-    heroBack.classList.add("active");
-    heroFront.classList.remove("active");
-    [heroFront,heroBack]=[heroBack,heroFront];
   };
   image.onerror=()=>{
     attempt++;
